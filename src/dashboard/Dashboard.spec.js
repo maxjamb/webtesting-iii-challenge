@@ -5,29 +5,38 @@ import * as rtl from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
 afterEach(rtl.cleanup);
-
 let wrapper;
-
 beforeEach(() => {
   wrapper = rtl.render(<Dashboard />);
 });
 
-describe("display component", () => {
-  test("shows controls and initial display", () => {
-    expect(wrapper.queryByText(/locked/i)).toBeInTheDocument();
-    expect(wrapper.queryByText(/unlocked/i)).toBeInTheDocument();
-    expect(wrapper.queryByText(/lock gate/i)).toBeInTheDocument();
-    expect(wrapper.queryByText(/close gate/i)).toBeInTheDocument();
-  });
-
-  test("shows default values - unlocked and open", () => {
-    expect(wrapper.queryByText(/unlocked/i)).toBeInTheDocument();
+describe("Gate", () => {
+  it("its `open` at initial render", () => {
     expect(wrapper.queryByText(/open/i)).toBeInTheDocument();
   });
-
-  test("cannot be closed or opened if locked", () => {
+  it("its `unlocked` at initial render", () => {
+    expect(wrapper.queryByText(/unlocked/i)).toBeInTheDocument();
+  });
+  it("cannot toggle closed or open if locked", () => {
+    expect(wrapper.queryByText(/unlocked/i)).toBeInTheDocument();
+    expect(wrapper.queryByText(/open/i)).toBeInTheDocument();
+    rtl.fireEvent.click(wrapper.queryByText(/close gate/i));
+    expect(wrapper.queryByText(/closed/i)).toBeInTheDocument();
     rtl.fireEvent.click(wrapper.queryByText(/lock gate/i));
-    expect(wrapper.queryByText(/open gate/i)).not.toBeInTheDocument;
-    expect(wrapper.queryByText(/close gate/i)).not.toBeInTheDocument;
+    expect(wrapper.queryByText(/locked/i)).toBeInTheDocument();
+    rtl.fireEvent.click(wrapper.queryByText(/open gate/i));
+    expect(wrapper.queryByText(/closed/i)).toBeInTheDocument();
+    expect(wrapper.queryByText(/locked/i)).toBeInTheDocument();
+  });
+});
+
+describe("Dashboard component", () => {
+  it("Displays Controls", () => {
+    expect(wrapper.queryByText(/close gate/i)).toBeInTheDocument();
+    expect(wrapper.queryByText(/lock gate/i)).toBeInTheDocument();
+  });
+  it("Shows display", () => {
+    expect(wrapper.queryByText(/unlocked/i)).toBeInTheDocument();
+    expect(wrapper.queryByText(/open/i)).toBeInTheDocument();
   });
 });
